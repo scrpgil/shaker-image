@@ -29,6 +29,11 @@ export class AppHome {
     this.move(ev);
   }
 
+  @Listen("touchmove")
+  handleScrollTouchMove(ev) {
+    this.move(ev);
+  }
+
   @Listen("mouseup")
   handleScrollMouseEnd() {
     this.moveEnd();
@@ -224,7 +229,7 @@ export class AppHome {
             <div class="title">横幅</div>
             <ion-range
               min={100}
-              max={900}
+              max={480}
               value={this.width}
               step={1}
               pin={true}
@@ -232,7 +237,7 @@ export class AppHome {
               onIonChange={e => this.widthSizeChange(e)}
             >
               <ion-label slot="start">100</ion-label>
-              <ion-label slot="end">900</ion-label>
+              <ion-label slot="end">480</ion-label>
             </ion-range>
           </div>
           <div class="height-size-wrapper">

@@ -5,8 +5,8 @@ import { Component, Element, State, Listen, h } from "@stencil/core";
   styleUrl: "app-home.css"
 })
 export class AppHome {
-  @State() width: number = 350;
-  @State() height: number = 250;
+  @State() width: number = 200;
+  @State() height: number = 150;
   @Element() el: HTMLElement;
 
   moved: boolean = false;
@@ -26,12 +26,14 @@ export class AppHome {
 
   @Listen("mousemove")
   handleScrollMouseMove(ev) {
-    this.move(ev);
+    console.log(ev.clientX, ev.clientY);
+    this.move(ev.clientX, ev.clientY);
   }
 
   @Listen("touchmove")
   handleScrollTouchMove(ev) {
-    this.move(ev);
+    console.log(ev.touches[0].clientX, ev.touches[0].clientY);
+    this.move(ev.touches[0].clientX, ev.touches[0].clientY);
   }
 
   @Listen("mouseup")
@@ -50,31 +52,50 @@ export class AppHome {
     }
   }
 
-  async moveStart(e) {
+  async moveStartMouse(ev) {
+    console.log(ev.clientX, ev.clientY);
+    this.moveStart(ev.clientX, ev.clientY);
+  }
+  async moveStartTouch(ev) {
+    console.log(ev.touches[0].clientX, ev.touches[0].clientY);
+    this.moveStart(ev.touches[0].clientX, ev.touches[0].clientY);
+  }
+  async moveStart(x: number, y: number) {
     if (!this.moved) {
-      let x = parseInt(
+      console.log("moveStart");
+      let elem_x = parseInt(
         document.getElementById("mask").style.left.replace("px", "")
       );
-      if (!x) {
-        x = 0;
+      if (!elem_x) {
+        elem_x = 0;
       }
-      let y = parseInt(
+      let elem_y = parseInt(
         document.getElementById("mask").style.top.replace("px", "")
       );
-      if (!y) {
-        y = 0;
+      if (!elem_y) {
+        elem_y = 0;
       }
-      this.move_start_x = e.clientX - x;
-      this.move_start_y = e.clientY - y;
+      this.move_start_x = x - elem_x;
+      this.move_start_y = y - elem_y;
+      console.log(x, y, elem_x, elem_y, this.move_start_x, this.move_start_y);
 
       this.moved = true;
     }
   }
 
-  async move(e: any) {
+  async move(x: number, y: number) {
     if (this.moved) {
-      this.mask_x = e.clientX - this.move_start_x;
-      this.mask_y = e.clientY - this.move_start_y;
+      this.mask_x = x - this.move_start_x;
+      this.mask_y = y - this.move_start_y;
+      console.log(
+        this.moved,
+        x,
+        y,
+        this.move_start_x,
+        this.move_start_y,
+        this.mask_x,
+        this.mask_y
+      );
       document.getElementById("mask").style.left = this.mask_x + "px";
       document.getElementById("mask").style.top = this.mask_y + "px";
     }
@@ -205,8 +226,8 @@ export class AppHome {
           <div
             class="mask-wrapper"
             id="mask"
-            onMouseDown={ev => this.moveStart(ev)}
-            onTouchStart={ev => this.moveStart(ev)}
+            onMouseDown={ev => this.moveStartMouse(ev)}
+            onTouchStart={ev => this.moveStartTouch(ev)}
           >
             <img
               width={this.width}

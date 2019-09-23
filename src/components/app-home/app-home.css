@@ -1,0 +1,30 @@
+.preview-wrapper {
+  max-width: 480px;
+  position: relative;
+}
+.mask-wrapper {
+  cursor: move;
+  position: absolute;
+  top: 60px;
+  left: 60px;
+}
+.mask-wrapper img {
+  pointer-events: none;
+}
+
+.width-size-wrapper .title,
+.height-size-wrapper .title {
+  margin-top: 8px;
+  font-weight: bold;
+}
+.width-size-wrapper ion-range,
+.height-size-wrapper ion-range {
+  padding-top: 0px;
+}
+#canvas-container {
+  position: relative;
+}
+#merge {
+  top: 0;
+  left: 0;
+}

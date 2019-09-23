@@ -126,15 +126,27 @@ export class AppHome {
     } else {
       this.canvasTop = this.canvasTop - 1;
     }
+    var randY = Math.floor(Math.random() * 6) + 5;
+    var randX = Math.floor(Math.random() * 5);
     if (10 <= this.canvasTop) {
       this.isY = false;
-      if (6 <= this.canvasTop) {
-        canvas.style.transform = "translateX(5px) scale(1.03)";
+      if (8 <= this.canvasTop) {
+        canvas.style.transform =
+          "translateX(-" +
+          randX +
+          "px) translateY(" +
+          randY +
+          "px) scale(1.02)";
       }
     } else if (-5 >= this.canvasTop) {
       this.isY = true;
-      if (-1 >= this.canvasTop) {
-        canvas.style.transform = "translateX(0px) scale(1.0)";
+      if (0 >= this.canvasTop) {
+        canvas.style.transform =
+          "translateX(" +
+          randX +
+          "px) translateY(-" +
+          randY +
+          "px) scale(0.98)";
       }
     }
     canvas.style.top = this.canvasTop + "px";

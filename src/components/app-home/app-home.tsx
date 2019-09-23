@@ -228,7 +228,7 @@ export class AppHome {
 
         <div>
           <label>
-            画像:
+            画像を読込む:
             <input type="file" onChange={event => this.drawImage(event)} />
           </label>
         </div>

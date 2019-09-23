@@ -26,13 +26,11 @@ export class AppHome {
 
   @Listen("mousemove")
   handleScrollMouseMove(ev) {
-    console.log(ev.clientX, ev.clientY);
     this.move(ev.clientX, ev.clientY);
   }
 
   @Listen("touchmove")
   handleScrollTouchMove(ev) {
-    console.log(ev.touches[0].clientX, ev.touches[0].clientY);
     this.move(ev.touches[0].clientX, ev.touches[0].clientY);
   }
 
@@ -53,16 +51,15 @@ export class AppHome {
   }
 
   async moveStartMouse(ev) {
-    console.log(ev.clientX, ev.clientY);
+    console.log("startMouse");
     this.moveStart(ev.clientX, ev.clientY);
   }
   async moveStartTouch(ev) {
-    console.log(ev.touches[0].clientX, ev.touches[0].clientY);
+    console.log("startMouse");
     this.moveStart(ev.touches[0].clientX, ev.touches[0].clientY);
   }
   async moveStart(x: number, y: number) {
     if (!this.moved) {
-      console.log("moveStart");
       let elem_x = parseInt(
         document.getElementById("mask").style.left.replace("px", "")
       );
@@ -77,7 +74,6 @@ export class AppHome {
       }
       this.move_start_x = x - elem_x;
       this.move_start_y = y - elem_y;
-      console.log(x, y, elem_x, elem_y, this.move_start_x, this.move_start_y);
 
       this.moved = true;
     }
@@ -87,26 +83,19 @@ export class AppHome {
     if (this.moved) {
       this.mask_x = x - this.move_start_x;
       this.mask_y = y - this.move_start_y;
-      console.log(
-        this.moved,
-        x,
-        y,
-        this.move_start_x,
-        this.move_start_y,
-        this.mask_x,
-        this.mask_y
-      );
       document.getElementById("mask").style.left = this.mask_x + "px";
       document.getElementById("mask").style.top = this.mask_y + "px";
     }
   }
 
   drawImage(e: any) {
+    console.log("drawImage");
     var preview: any = document.getElementById("preview");
     var reader = new FileReader();
     reader.onload = e => {
       preview.src = e.target.result;
     };
+    console.log(e.target.files[0]);
     reader.readAsDataURL(e.target.files[0]);
   }
 
@@ -117,8 +106,6 @@ export class AppHome {
     var mask: any = document.getElementById("mask-image");
     c.width = preview.width;
     c.height = preview.height;
-    console.log(this.mask_x);
-    console.log(this.mask_y);
     ctx.drawImage(preview, 0, 0, preview.width, preview.height);
     ctx.drawImage(mask, this.mask_x, this.mask_y, mask.width, mask.height);
     // var img = c.toDataURL("image/png");
@@ -242,7 +229,7 @@ export class AppHome {
         <div>
           <label>
             画像:
-            <input type="file" onInput={event => this.drawImage(event)} />
+            <input type="file" onChange={event => this.drawImage(event)} />
           </label>
         </div>
         <div class="controller">

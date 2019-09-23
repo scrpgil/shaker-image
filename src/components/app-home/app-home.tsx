@@ -15,6 +15,10 @@ export class AppHome {
 
   mask_x: number = 60;
   mask_y: number = 60;
+  canvasTop: number = 0;
+  intervalId: any;
+  isShake: boolean = false;
+  isY: boolean = false;
 
   widthSizeChange(el) {
     this.width = el.detail.value;
@@ -112,6 +116,37 @@ export class AppHome {
     // document.write('<img src="' + img + '" width="328" height="526"/>');
   }
 
+  imgShakeToggle(): void {
+    var canvas: any = document.getElementById("merge");
+    if (!this.canvasTop) {
+      this.canvasTop = 0;
+    }
+    if (this.isY) {
+      this.canvasTop = this.canvasTop + 1;
+    } else {
+      this.canvasTop = this.canvasTop - 1;
+    }
+    if (10 <= this.canvasTop) {
+      this.isY = false;
+      if (6 <= this.canvasTop) {
+        canvas.style.transform = "translateX(5px) scale(1.03)";
+      }
+    } else if (-5 >= this.canvasTop) {
+      this.isY = true;
+      if (-1 >= this.canvasTop) {
+        canvas.style.transform = "translateX(0px) scale(1.0)";
+      }
+    }
+    canvas.style.top = this.canvasTop + "px";
+  }
+  imgShake() {
+    if (!this.intervalId) {
+      this.intervalId = setInterval(this.imgShakeToggle, 7);
+    } else {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
   saveCanvas(saveType) {
     var imageType = "image/png";
     var fileName = "shaker_" + this.getDateTime() + ".png";
@@ -271,6 +306,9 @@ export class AppHome {
           <div id="canvas-container">
             <canvas id="merge" />
           </div>
+          <ion-button onClick={() => this.imgShake()} expand="block">
+            揺らす
+          </ion-button>
           <ion-button onClick={() => this.saveCanvas("png")} expand="block">
             ダウンロード
           </ion-button>

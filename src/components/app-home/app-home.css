@@ -23,8 +23,12 @@
 }
 #canvas-container {
   position: relative;
+  padding: 20px 0px;
 }
 #merge {
+  position: relative;
   top: 0;
   left: 0;
+  transition: transform 100ms;
+
 }

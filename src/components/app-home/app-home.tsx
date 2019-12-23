@@ -126,8 +126,8 @@ export class AppHome {
     } else {
       this.canvasTop = this.canvasTop - 1;
     }
-    var randY = Math.floor(Math.random() * 6) + 5;
-    var randX = Math.floor(Math.random() * 5);
+    var randY = 1; //Math.floor(Math.random() * 6) + 5;
+    var randX = 10 //Math.floor(Math.random() * 5);
     if (10 <= this.canvasTop) {
       this.isY = false;
       if (8 <= this.canvasTop) {
@@ -136,7 +136,7 @@ export class AppHome {
           randX +
           "px) translateY(" +
           randY +
-          "px) scale(1.02)";
+          "px) scale(1.01)";
       }
     } else if (-5 >= this.canvasTop) {
       this.isY = true;
@@ -146,7 +146,7 @@ export class AppHome {
           randX +
           "px) translateY(-" +
           randY +
-          "px) scale(0.98)";
+          "px) scale(0.99)";
       }
     }
     canvas.style.top = this.canvasTop + "px";

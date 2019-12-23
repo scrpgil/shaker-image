@@ -17,8 +17,14 @@ export class AppHome {
   mask_y: number = 60;
   canvasTop: number = 0;
   intervalId: any;
-  isShake: boolean = false;
+  @State() isShake: boolean = false;
   isY: boolean = false;
+
+  offsetX: number = 0;
+  offsetY: number = 0;
+  offsetZ: number = 0;
+  offsetDelay: number = 0;
+  count: number = 0;
 
   widthSizeChange(el) {
     this.width = el.detail.value;
@@ -26,6 +32,22 @@ export class AppHome {
 
   heightSizeChange(el) {
     this.height = el.detail.value;
+  }
+
+  offsetXChange(el) {
+    this.offsetX = el.detail.value;
+  }
+
+  offsetYChange(el) {
+    this.offsetY = el.detail.value;
+  }
+
+  offsetZChange(el) {
+    this.offsetZ = el.detail.value;
+  }
+
+  offsetDelayChange(el) {
+    this.offsetDelay = el.detail.value;
   }
 
   @Listen("mousemove")
@@ -55,11 +77,9 @@ export class AppHome {
   }
 
   async moveStartMouse(ev) {
-    console.log("startMouse");
     this.moveStart(ev.clientX, ev.clientY);
   }
   async moveStartTouch(ev) {
-    console.log("startMouse");
     this.moveStart(ev.touches[0].clientX, ev.touches[0].clientY);
   }
   async moveStart(x: number, y: number) {
@@ -93,13 +113,11 @@ export class AppHome {
   }
 
   drawImage(e: any) {
-    console.log("drawImage");
     var preview: any = document.getElementById("preview");
     var reader = new FileReader();
     reader.onload = e => {
       preview.src = e.target.result;
     };
-    console.log(e.target.files[0]);
     reader.readAsDataURL(e.target.files[0]);
   }
 
@@ -112,11 +130,14 @@ export class AppHome {
     c.height = preview.height;
     ctx.drawImage(preview, 0, 0, preview.width, preview.height);
     ctx.drawImage(mask, this.mask_x, this.mask_y, mask.width, mask.height);
-    // var img = c.toDataURL("image/png");
-    // document.write('<img src="' + img + '" width="328" height="526"/>');
   }
 
   imgShakeToggle(): void {
+    this.count++;
+    if (this.count < this.offsetDelay / 10) {
+      return;
+    }
+    this.count = 0;
     var canvas: any = document.getElementById("merge");
     if (!this.canvasTop) {
       this.canvasTop = 0;
@@ -126,37 +147,57 @@ export class AppHome {
     } else {
       this.canvasTop = this.canvasTop - 1;
     }
-    var randY = 1; //Math.floor(Math.random() * 6) + 5;
-    var randX = 10 //Math.floor(Math.random() * 5);
-    if (10 <= this.canvasTop) {
-      this.isY = false;
-      if (8 <= this.canvasTop) {
-        canvas.style.transform =
-          "translateX(-" +
-          randX +
-          "px) translateY(" +
-          randY +
-          "px) scale(1.01)";
+    if (0 <= this.canvasTop) {
+      let scale = 1;
+      if (this.offsetZ != 0) {
+        scale = 1 + this.offsetZ / 1000;
       }
-    } else if (-5 >= this.canvasTop) {
-      this.isY = true;
-      if (0 >= this.canvasTop) {
-        canvas.style.transform =
-          "translateX(" +
-          randX +
-          "px) translateY(-" +
-          randY +
-          "px) scale(0.99)";
+      let x = 0;
+      if (this.offsetX != 0) {
+        x = 1 + this.offsetX / 10;
+        x = (x / 6) * this.canvasTop;
       }
+      let y = 0;
+      if (this.offsetY != 0) {
+        y = 1 + this.offsetY / 10;
+        y = (y / 6) * this.canvasTop;
+      }
+      canvas.style.transform =
+        "translateX(-" + x + "px) translateY(" + y + "px) scale(" + scale + ")";
+    } else if (0 > this.canvasTop) {
+      let scale = 1;
+      if (this.offsetZ != 0) {
+        scale = 1 - this.offsetZ / 1000;
+      }
+      let x = 0;
+      if (this.offsetX != 0) {
+        x = 1 + this.offsetX / 10;
+        x = (x / 6) * this.canvasTop;
+      }
+      let y = 0;
+      if (this.offsetY != 0) {
+        y = 1 + this.offsetY / 10;
+        y = (y / 6) * this.canvasTop;
+      }
+      canvas.style.transform =
+        "translateX(" + x + "px) translateY(-" + y + "px) scale(" + scale + ")";
     }
-    canvas.style.top = this.canvasTop + "px";
+
+    if (6 <= this.canvasTop) {
+      this.isY = false;
+    } else if (-6 >= this.canvasTop) {
+      this.isY = true;
+    }
   }
   imgShake() {
     if (!this.intervalId) {
-      this.intervalId = setInterval(this.imgShakeToggle, 7);
+      this.intervalId = setInterval(this.imgShakeToggle.bind(this), 1);
+      this.isShake = true;
     } else {
       clearInterval(this.intervalId);
       this.intervalId = null;
+      this.isShake = false;
+      this.count = 0;
     }
   }
   saveCanvas(saveType) {
@@ -318,6 +359,74 @@ export class AppHome {
           <div id="canvas-container">
             <canvas id="merge" />
           </div>
+          {(() => {
+            if (this.isShake) {
+              return (
+                <div class="config">
+                  <div class="width-size-wrapper">
+                    <div class="title">X</div>
+                    <ion-range
+                      min={0}
+                      max={100}
+                      value={this.offsetX}
+                      step={1}
+                      pin={true}
+                      color="medium"
+                      onIonChange={e => this.offsetXChange(e)}
+                    >
+                      <ion-label slot="start">0</ion-label>
+                      <ion-label slot="end">100</ion-label>
+                    </ion-range>
+                  </div>
+                  <div class="width-size-wrapper">
+                    <div class="title">Y</div>
+                    <ion-range
+                      min={0}
+                      max={100}
+                      value={this.offsetY}
+                      step={1}
+                      pin={true}
+                      color="medium"
+                      onIonChange={e => this.offsetYChange(e)}
+                    >
+                      <ion-label slot="start">0</ion-label>
+                      <ion-label slot="end">100</ion-label>
+                    </ion-range>
+                  </div>
+                  <div class="width-size-wrapper">
+                    <div class="title">Scale</div>
+                    <ion-range
+                      min={0}
+                      max={100}
+                      value={this.offsetZ}
+                      step={1}
+                      pin={true}
+                      color="medium"
+                      onIonChange={e => this.offsetZChange(e)}
+                    >
+                      <ion-label slot="start">0</ion-label>
+                      <ion-label slot="end">100</ion-label>
+                    </ion-range>
+                  </div>
+                  <div class="width-size-wrapper">
+                    <div class="title">Delay</div>
+                    <ion-range
+                      min={0}
+                      max={100}
+                      value={this.offsetDelay}
+                      step={1}
+                      pin={true}
+                      color="medium"
+                      onIonChange={e => this.offsetDelayChange(e)}
+                    >
+                      <ion-label slot="start">0</ion-label>
+                      <ion-label slot="end">100</ion-label>
+                    </ion-range>
+                  </div>
+                </div>
+              );
+            }
+          })()}
           <ion-button onClick={() => this.imgShake()} expand="block">
             揺らす
           </ion-button>
